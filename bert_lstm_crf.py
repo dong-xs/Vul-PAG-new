@@ -72,8 +72,12 @@ class BERT_LSTM_CRF(nn.Module):
                     # res = torch.mean(res, dim=0, keepdim=True)          # 拼接方式一：求整个值段的平均值
                     # res = (res[0]+res[-1])/2                              # 拼接方式二：使用左右两边的单词
                     # res = res[0]                                        # 拼接方式三：直接使用最左边的单词来代替
-                    res = res[-1]                                       # 拼接方式四：直接使用最后一个位置上的单词代替
-
+                    # res = res[-1]                                       # 拼接方式四：直接使用最后一个位置上的单词代替
+                    
+                    for k in range(res.shape[0]):                 # 新拼接方式
+                        res[i]=res[i]*(2*(k+1)/(a.shape[0]*(a.shape[0]+1)))
+                    res = torch.mean(res, dim=0, keepdim=True) 
+                    
                     embed.append(torch.squeeze(res).tolist())           # squeeze用于对1*n的矩阵降低一个维度为n；
                 else:
                     embed.append(torch.squeeze(res).tolist())
